@@ -1,6 +1,47 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { sections, topicsTable } from './data';
 
+/* ── Theme Hook ── */
+function useTheme() {
+    const [theme, setTheme] = useState(() => {
+        return localStorage.getItem('theme') || 'dark';
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
+    return { theme, toggleTheme };
+}
+
+/* ── Sun Icon ── */
+function SunIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+    );
+}
+
+/* ── Moon Icon ── */
+function MoonIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+    );
+}
+
 /* ── Code Block Component ── */
 function CodeBlock({ code }) {
     const [copied, setCopied] = useState(false);
@@ -94,7 +135,7 @@ function QuestionCard({ question, qNumber, sectionColor, isActiveQ, onVisible })
 }
 
 /* ── Sidebar ── */
-function Sidebar({ activeSection, activeQ, onSectionClick, onQClick, sidebarOpen, setSidebarOpen }) {
+function Sidebar({ activeSection, activeQ, onSectionClick, onQClick, sidebarOpen, setSidebarOpen, theme, toggleTheme }) {
     const [expandedSection, setExpandedSection] = useState(null);
     const [search, setSearch] = useState('');
 
@@ -115,13 +156,21 @@ function Sidebar({ activeSection, activeQ, onSectionClick, onQClick, sidebarOpen
         <>
             <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
             <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                {/* Logo */}
+                {/* Logo + Theme Toggle */}
                 <div className="sidebar-logo">
                     <span style={{ fontSize: '1.5rem' }}>🚀</span>
                     <div className="sidebar-logo-text">
                         Interview Guide
                         <span>JS · React · Next.js</span>
                     </div>
+                    <button
+                        className="theme-toggle"
+                        onClick={toggleTheme}
+                        title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                        aria-label="Toggle theme"
+                    >
+                        {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+                    </button>
                 </div>
 
                 {/* Search */}
@@ -231,6 +280,7 @@ export default function App() {
     const [targetQ, setTargetQ] = useState(null);
     const [progress, setProgress] = useState(0);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { theme, toggleTheme } = useTheme();
 
     // Track scroll progress
     useEffect(() => {
@@ -290,6 +340,8 @@ export default function App() {
                     onQClick={handleQClick}
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
+                    theme={theme}
+                    toggleTheme={toggleTheme}
                 />
 
                 <main className="main-content">
