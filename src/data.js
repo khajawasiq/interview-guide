@@ -1,3 +1,6 @@
+import { questionRefs } from './references.js';
+import { expandedAnswers } from './answers.js';
+
 export const sections = [
     {
         id: 'js-fundamentals',
@@ -1344,6 +1347,14 @@ function processOnce(node) {
         ],
     },
 ];
+
+// Merge expanded answers + external reference links into each question
+sections.forEach(section =>
+    section.questions.forEach(q => {
+        if (expandedAnswers[q.id]) q.answer = expandedAnswers[q.id];
+        if (questionRefs[q.id])    q.references = questionRefs[q.id];
+    })
+);
 
 export const topicsTable = [
     { topic: 'Closures', points: 'Scope chain, private state, loop bug with var vs let' },

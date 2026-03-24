@@ -128,6 +128,26 @@ function QuestionCard({ question, qNumber, sectionColor, isActiveQ, onVisible })
                     )}
 
                     <CodeBlock code={question.code} />
+
+                    {question.references?.length > 0 && (
+                        <div className="references">
+                            <div className="references-title">📚 References</div>
+                            <div className="references-list">
+                                {question.references.map((ref, i) => (
+                                    <a
+                                        key={i}
+                                        href={ref.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="ref-link"
+                                    >
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                        {ref.label}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
